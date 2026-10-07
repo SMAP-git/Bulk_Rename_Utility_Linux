@@ -30,20 +30,20 @@ dependencies if the application does not start from a minimal environment.
 
 ## Linux packages
 
-All builds target x86_64 Linux and bundle the .NET runtime. Build each package on its target distribution, then attach the files from `artifacts/` to a GitHub Release so the download links work. The scripts default to version `1.0.0`; set `VERSION` to override it.
+All builds target x86_64 Linux and bundle the .NET runtime. Build each package on its target distribution, then attach the files from `artifacts/` to a GitHub Release so the download links work. The scripts default to version `1.0.1`; set `VERSION` to override it.
 
 | Package | Build command | Local output path | Download |
 | --- | --- | --- | --- |
-| Debian/Ubuntu (.deb) | `bash packaging/debian/build-deb.sh` | `artifacts/debian/bulk-rename-utility_1.0.0_amd64.deb` | [Download .deb](https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/latest/download/bulk-rename-utility_1.0.0_amd64.deb) |
-| Fedora (.rpm) | `bash packaging/fedora/build-rpm.sh` | `artifacts/fedora/bulk-rename-utility-1.0.0-1.x86_64.rpm` | [Download .rpm](https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/latest/download/bulk-rename-utility-1.0.0-1.x86_64.rpm) |
-| Arch Linux (.pkg.tar.gz) | `bash packaging/arch/build-arch.sh` | `artifacts/arch/bulk-rename-utility-1.0.0-1-x86_64.pkg.tar.gz` | [Download Arch package](https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/latest/download/bulk-rename-utility-1.0.0-1-x86_64.pkg.tar.gz) |
+| Debian/Ubuntu (.deb) | `bash packaging/debian/build-deb.sh` | `artifacts/debian/bulk-rename-utility_1.0.1_amd64.deb` | [Download .deb](https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/latest/download/bulk-rename-utility_1.0.1_amd64.deb) |
+| Fedora (.rpm) | `bash packaging/fedora/build-rpm.sh` | `artifacts/fedora/bulk-rename-utility-1.0.1-1.x86_64.rpm` | [Download .rpm](https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/latest/download/bulk-rename-utility-1.0.1-1.x86_64.rpm) |
+| Arch Linux (.pkg.tar.gz) | `bash packaging/arch/build-arch.sh` | `artifacts/arch/bulk-rename-utility-1.0.1-1-x86_64.pkg.tar.gz` | [Download Arch package](https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/latest/download/bulk-rename-utility-1.0.1-1-x86_64.pkg.tar.gz) |
 | Flatpak | `bash packaging/flatpak/build-flatpak.sh` | `artifacts/flatpak/io.github.smapgit.bulkrenameutility.flatpak` | [Download Flatpak](https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/latest/download/io.github.smapgit.bulkrenameutility.flatpak) |
 
 Release asset names must match the file names above. The Flatpak build needs Flatpak Builder and the Freedesktop 26.08 SDK/runtime; its app listing is `packaging/flatpak/io.github.smapgit.bulkrenameutility.metainfo.xml`.
 
 ## Docker and Unraid
 
-Build the Debian package, then run `bash packaging/docker/build-docker.sh` to create the local `bulk-rename-utility:1.0.0` image with TigerVNC and a browser WebUI on port `6081`. VNC authentication is optional; no-password access is unsafe on untrusted networks. To publish the image to GitHub Container Registry after creating a release with the `.deb` attached, run `gh workflow run publish-docker.yml --repo SMAP-git/Bulk_Rename_Utility_Linux -f version=1.0.0`, then pull `ghcr.io/smap-git/bulk-rename-utility:1.0.0`.
+Build the Debian package, then run `bash packaging/docker/build-docker.sh` to create the local `bulk-rename-utility:1.0.1` image with TigerVNC and a browser WebUI on port `6081`. VNC authentication is optional; no-password access is unsafe on untrusted networks. To publish the image to GitHub Container Registry after creating a release with the `.deb` attached, run `gh workflow run publish-docker.yml --repo SMAP-git/Bulk_Rename_Utility_Linux -f version=1.0.1`, then pull `ghcr.io/smap-git/bulk-rename-utility:1.0.1`.
 
 For Unraid, use the [container template](packaging/docker/unraid-template.xml) and see [the Docker guide](packaging/docker/README.md) for mounts and network safety.
 

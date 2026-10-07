@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-VERSION="${VERSION:-1.0.0}"
+VERSION="${VERSION:-1.0.1}"
 DEB_PACKAGE="${DEB_PACKAGE:-$ROOT_DIR/artifacts/debian/bulk-rename-utility_${VERSION}_amd64.deb}"
 IMAGE_NAME="${IMAGE_NAME:-bulk-rename-utility:${VERSION}}"
 BUILD_DIR="$(mktemp -d)"

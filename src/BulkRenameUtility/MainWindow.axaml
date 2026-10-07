@@ -152,7 +152,7 @@
       <Border Grid.Column="2" Classes="section-card" Padding="0">
         <Grid RowDefinitions="Auto,*">
           <Border Background="{DynamicResource HeaderBg}" CornerRadius="6,6,0,0" Padding="12,0" Height="44" BorderBrush="{DynamicResource HeaderBorder}" BorderThickness="0,0,0,1">
-            <Grid ColumnDefinitions="32,2*,2*,0.7*,1.2*,0.8*,0.8*">
+            <Grid ColumnDefinitions="32,*,*,68,120,76,70">
               <CheckBox x:Name="SelectAllCheck" IsChecked="False" Click="ToggleAllSelection" VerticalAlignment="Center" MinWidth="0" Padding="0" />
               <Button x:Name="NameHeader" Grid.Column="1" Content="Name ↑" Classes="column-header" Click="SortByName" />
               <Button x:Name="NewNameHeader" Grid.Column="2" Content="New name (preview)" Classes="column-header" Click="SortByNewName" />
@@ -167,12 +167,11 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                   <Border Classes="file-row" Classes.selected="{Binding IsSelected}" Background="Transparent" PointerPressed="RowPointerPressed" BorderBrush="{DynamicResource RowBorder}" BorderThickness="0,0,0,1" Padding="12,0" Height="40">
-                    <Grid ColumnDefinitions="32,2*,2*,0.7*,1.2*,0.8*,0.8*">
+                    <Grid ColumnDefinitions="32,*,*,68,120,76,70">
                       <CheckBox IsChecked="{Binding IsSelected}" Click="RowSelectionChanged" VerticalAlignment="Center" MinWidth="0" Padding="0" />
-                      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
-                      </StackPanel>
-                      <TextBlock Grid.Column="2" Text="{Binding NewName}" Foreground="{DynamicResource GoodFg}"
+                      <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="0,0,10,0"
+                                 TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="2" Text="{Binding NewName}" Foreground="{DynamicResource GoodFg}" Margin="0,0,10,0"
                                  TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                       <TextBlock Grid.Column="3" Text="{Binding SizeDisplay}" Classes="muted" VerticalAlignment="Center" />
                       <TextBlock Grid.Column="4" Text="{Binding Modified, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"

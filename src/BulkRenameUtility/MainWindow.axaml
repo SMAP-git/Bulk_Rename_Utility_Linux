@@ -1,0 +1,499 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BulkRenameUtility.MainWindow"
+        Title="Bulk Rename Utility" Icon="avares://BulkRenameUtility/Assets/bru-linux.png"
+        Width="1440" Height="940" MinWidth="1040" MinHeight="720"
+        Background="{DynamicResource AppBg}">
+  <Window.Styles>
+    <Style Selector="TextBlock.section-title">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{DynamicResource TitleFg}" />
+    </Style>
+    <Style Selector="Border.section-card">
+      <Setter Property="Background" Value="{DynamicResource CardBg}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="ClipToBounds" Value="True" />
+      <Setter Property="Padding" Value="8" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{DynamicResource MutedFg}" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="Button.column-header">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Foreground" Value="{DynamicResource TitleFg}" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBox, ComboBox, AutoCompleteBox, NumericUpDown">
+      <Setter Property="MinHeight" Value="28" />
+      <Setter Property="Padding" Value="6,2" />
+    </Style>
+    <Style Selector="Border.file-row.selected">
+      <Setter Property="Background" Value="#334C8DFF" />
+    </Style>
+    <Style Selector="NumericUpDown">
+      <Setter Property="MinWidth" Value="84" />
+    </Style>
+    <Style Selector="ListBox#FolderList ListBoxItem">
+      <Setter Property="Padding" Value="12,0" />
+      <Setter Property="Height" Value="40" />
+      <Setter Property="MinHeight" Value="40" />
+    </Style>
+    <Style Selector="ButtonSpinner /template/ RepeatButton">
+      <Setter Property="Width" Value="26" />
+      <Setter Property="MinWidth" Value="26" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="Button.banner">
+      <Setter Property="Background" Value="#33FFFFFF" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="Button.banner.accent">
+      <Setter Property="Background" Value="{DynamicResource AccentBg}" />
+    </Style>
+    <Style Selector="Button.banner:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#1AFFFFFF" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.banner:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#66FFFFFF" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="MinHeight" Value="34" />
+    </Style>
+  </Window.Styles>
+
+  <Grid x:Name="RootGrid" RowDefinitions="Auto,Auto,*,6,250">
+
+    <Border Grid.Row="0" Background="{DynamicResource BannerBg}" Padding="20,12">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock x:Name="AppTitleText" Text="Bulk Rename Utility" FontSize="23" FontWeight="Bold" Foreground="White" />
+          <TextBlock x:Name="AppSubtitleText" Text="Preview every change before it touches your files." FontSize="12" Foreground="#D8E4F2" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+        <Button x:Name="SelectAllButton" Classes="banner" Content="Select all" Click="SelectAll" Height="34" />
+        <Button x:Name="ClearSelectionButton" Classes="banner" Content="Clear selection" Click="ClearSelection" Height="34" />
+        <Button x:Name="RenameButton" Classes="banner accent" Content="Rename selected" Click="ApplyRenames" FontWeight="SemiBold" Height="34" />
+        <Button x:Name="SettingsButton" Classes="banner" Background="{DynamicResource BadgeBg}" Content="⚙" FontSize="18" Width="34" Height="34" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip.Tip="Settings">
+          <Button.Flyout>
+            <MenuFlyout Placement="BottomEdgeAlignedRight">
+              <MenuItem x:Name="LanguageMenu" Header="Language" />
+              <MenuItem x:Name="ThemeMenu" Header="Theme">
+                <MenuItem x:Name="ThemeSystemItem" Header="Follow the system" Click="ThemeSystem" />
+                <MenuItem x:Name="ThemeLightItem" Header="Light" Click="ThemeLight" />
+                <MenuItem x:Name="ThemeDarkItem" Header="Dark" Click="ThemeDark" />
+              </MenuItem>
+              <MenuItem x:Name="HelpMenu" Header="Help">
+                <MenuItem x:Name="AboutMenuItem" Header="About Bulk Rename Utility" Click="ShowAbout" />
+              </MenuItem>
+            </MenuFlyout>
+          </Button.Flyout>
+        </Button>
+        <Border Background="{DynamicResource BadgeBg}" CornerRadius="6" Padding="12,7" Height="34" VerticalAlignment="Center">
+          <TextBlock x:Name="SafePreviewText" Text="v1.0" FontSize="11" FontWeight="Bold" Foreground="White" />
+        </Border>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid x:Name="ToolbarGrid" Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="6">
+      <Button x:Name="ParentButton" Content="↑ Parent" Click="NavigateParent" Margin="0,0,8,0" />
+      <TextBox x:Name="PathBox" Grid.Column="1" Watermark="Folder path…" KeyDown="PathKeyDown" />
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" Margin="8,0,0,0">
+        <CheckBox x:Name="ShowHiddenCheck" Content="Show hidden" VerticalAlignment="Center" Click="ShowHiddenChanged" />
+        <Button x:Name="TypeFilterButton" Content="Types: All">
+          <Button.Flyout>
+            <Flyout Placement="BottomEdgeAlignedRight">
+              <StackPanel Spacing="4" MinWidth="180">
+                <Button x:Name="TypeAllButton" Content="All types" Click="TypeFilterClear" />
+                <ScrollViewer MaxHeight="320">
+                  <StackPanel x:Name="TypeFilterPanel" Spacing="2" />
+                </ScrollViewer>
+              </StackPanel>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
+        <Button x:Name="BrowseButton" Content="Browse…" Click="BrowseFolder" />
+        <Button x:Name="RefreshButton" Content="Refresh" Click="RefreshFolder" />
+      </StackPanel>
+    </Grid>
+
+    <Grid x:Name="PanelsGrid" Grid.Row="2" ColumnDefinitions="220,6,*" Margin="6,0,6,0">
+      <Border Grid.Column="0" Classes="section-card" Padding="0">
+        <Grid RowDefinitions="Auto,*">
+          <Border Background="{DynamicResource HeaderBg}" CornerRadius="6,6,0,0" Padding="12,0" Height="44" BorderBrush="{DynamicResource HeaderBorder}" BorderThickness="0,0,0,1">
+            <TextBlock x:Name="FoldersTitle" Text="FOLDERS" Classes="section-title" VerticalAlignment="Center" />
+          </Border>
+          <ListBox x:Name="FolderList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                   SelectionChanged="FolderSelectionChanged">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Name}" Padding="0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Grid>
+      </Border>
+
+      <GridSplitter x:Name="ColumnSplitter" Grid.Column="1" Width="6" Background="Transparent" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" />
+      <Border Grid.Column="2" Classes="section-card" Padding="0">
+        <Grid RowDefinitions="Auto,*">
+          <Border Background="{DynamicResource HeaderBg}" CornerRadius="6,6,0,0" Padding="12,0" Height="44" BorderBrush="{DynamicResource HeaderBorder}" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="32,2*,2*,0.7*,1.2*,0.8*,0.8*">
+              <CheckBox x:Name="SelectAllCheck" IsChecked="False" Click="ToggleAllSelection" VerticalAlignment="Center" MinWidth="0" Padding="0" />
+              <Button x:Name="NameHeader" Grid.Column="1" Content="Name ↑" Classes="column-header" Click="SortByName" />
+              <Button x:Name="NewNameHeader" Grid.Column="2" Content="New name (preview)" Classes="column-header" Click="SortByNewName" />
+              <Button x:Name="SizeHeader" Grid.Column="3" Content="Size" Classes="column-header" Click="SortBySize" />
+              <Button x:Name="ModifiedHeader" Grid.Column="4" Content="Modified" Classes="column-header" Click="SortByModified" />
+              <Button x:Name="TypeHeader" Grid.Column="5" Content="Type" Classes="column-header" Click="SortByType" />
+              <Button x:Name="StatusHeader" Grid.Column="6" Content="Status" Classes="column-header" Click="SortByStatus" />
+            </Grid>
+          </Border>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="FilesList">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Classes="file-row" Classes.selected="{Binding IsSelected}" Background="Transparent" PointerPressed="RowPointerPressed" BorderBrush="{DynamicResource RowBorder}" BorderThickness="0,0,0,1" Padding="12,0" Height="40">
+                    <Grid ColumnDefinitions="32,2*,2*,0.7*,1.2*,0.8*,0.8*">
+                      <CheckBox IsChecked="{Binding IsSelected}" Click="RowSelectionChanged" VerticalAlignment="Center" MinWidth="0" Padding="0" />
+                      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                      </StackPanel>
+                      <TextBlock Grid.Column="2" Text="{Binding NewName}" Foreground="{DynamicResource GoodFg}"
+                                 TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="3" Text="{Binding SizeDisplay}" Classes="muted" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="4" Text="{Binding Modified, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                                 Classes="muted" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="5" Text="{Binding TypeDisplay}" Classes="muted"
+                                 TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="6" Text="{Binding Status}" Classes="muted"
+                                 TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </Border>
+    </Grid>
+
+    <GridSplitter x:Name="RowSplitter" Grid.Row="3" Height="6" Margin="6,0" Background="Transparent" Cursor="SizeNorthSouth" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" />
+    <ScrollViewer x:Name="OptionsScroll" Grid.Row="4" Margin="6,0,6,6" VerticalScrollBarVisibility="Auto">
+      <Grid x:Name="OptionsGrid" ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="4" RowSpacing="4">
+        <Grid Grid.Column="0" RowSpacing="4" RowDefinitions="Auto,Auto,*">
+        <Border Grid.Row="0" Classes="section-card">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="RegexTitle" HorizontalAlignment="Center" Text="1  Regular expression" Classes="section-title" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+              <AutoCompleteBox x:Name="RegexMatchBox" Watermark="Match pattern" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="1"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenRegexMatchHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+              <AutoCompleteBox x:Name="RegexReplaceBox" Watermark="Replace with" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="1"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenRegexReplaceHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+            <WrapPanel>
+              <CheckBox x:Name="RegexIgnoreCaseCheck" Content="Ignore case" Click="OptionsChanged" Margin="0,0,12,0" />
+              <CheckBox x:Name="RegexExtensionCheck" Content="Inc. Ext." Click="OptionsChanged" />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Classes="section-card">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="NameCaseTitle" HorizontalAlignment="Center" Text="2  Name and case" Classes="section-title" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="4">
+<ComboBox x:Name="NameModeBox" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+              <ComboBoxItem Content="Keep" Tag="Keep" /><ComboBoxItem Content="Fixed" Tag="Fixed" />
+              <ComboBoxItem Content="Prefix" Tag="Prefix" /><ComboBoxItem Content="Suffix" Tag="Suffix" />
+            </ComboBox>
+<ComboBox x:Name="CaseModeBox" Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+              <ComboBoxItem Content="Same case" Tag="Same" /><ComboBoxItem Content="UPPERCASE" Tag="UPPERCASE" />
+              <ComboBoxItem Content="lowercase" Tag="lowercase" /><ComboBoxItem Content="Title Case" Tag="Title Case" />
+            </ComboBox>
+</Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+              <AutoCompleteBox x:Name="NameValueBox" Watermark="Name value" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="1"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenNameValueHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+            
+          </StackPanel>
+        </Border>
+        <Border Grid.Row="2" Classes="section-card">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="ExtensionTitle" HorizontalAlignment="Center" Text="3  Extension" Classes="section-title" />
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
+              <ComboBox x:Name="ExtensionModeBox" SelectedIndex="0" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="Same" Tag="Same" /><ComboBoxItem Content="Lower" Tag="lowercase" /><ComboBoxItem Content="Upper" Tag="UPPERCASE" />
+                <ComboBoxItem Content="Title" Tag="Title" /><ComboBoxItem Content="Fixed" Tag="Fixed" /><ComboBoxItem Content="Extra" Tag="Extra" /><ComboBoxItem Content="Remove" Tag="Remove" />
+              </ComboBox>
+              <TextBox x:Name="ExtensionTextBox" Grid.Column="1" HorizontalAlignment="Stretch" Watermark="Extension text" TextChanged="OptionsChanged" />
+            </Grid>
+          </StackPanel>
+        </Border>
+        </Grid>
+        <Grid Grid.Column="1" RowSpacing="4" RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Classes="section-card">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="ReplaceTitle" HorizontalAlignment="Center" Text="4  Replace text" Classes="section-title" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+              <AutoCompleteBox x:Name="ReplaceBox" Watermark="Find" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="1"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenReplaceHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+              <AutoCompleteBox x:Name="WithBox" Watermark="Replace with" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="1"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenWithHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Spacing="14">
+              <CheckBox x:Name="ReplaceIgnoreCaseCheck" Content="Match case" Click="OptionsChanged" />
+              <CheckBox x:Name="ReplaceFirstCheck" Content="First only" Click="OptionsChanged" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Classes="section-card">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="AddTitle" HorizontalAlignment="Center" Text="5  Add" Classes="section-title" />
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
+              <TextBlock x:Name="PrefixLabel" Text="Prefix" Width="48" VerticalAlignment="Center" />
+              <AutoCompleteBox x:Name="PrefixBox" Grid.Column="1" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="2"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenPrefixHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
+              <TextBlock x:Name="InsertLabel" Text="Insert" Width="48" VerticalAlignment="Center" />
+              <AutoCompleteBox x:Name="InsertBox" Grid.Column="1" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="2"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenInsertHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+              <TextBlock x:Name="InsertPosLabel" Text="at pos." Width="48" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="InsertPosBox" Grid.Column="1" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
+              <TextBlock x:Name="SuffixLabel" Width="48" Text="Suffix" VerticalAlignment="Center" />
+              <AutoCompleteBox x:Name="SuffixBox" Grid.Column="1" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="2"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenSuffixHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+          </StackPanel>
+        </Border>
+        </Grid>
+        <Grid Grid.Column="2" RowSpacing="4" RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Classes="section-card">
+          <StackPanel Spacing="4">
+                          <TextBlock x:Name="NumberingTitle" HorizontalAlignment="Center" Text="6  Numbering" Classes="section-title" />
+            <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="4" RowSpacing="4"
+                  RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+              <TextBlock x:Name="NumberModeLabel" Text="Mode" VerticalAlignment="Center" />
+              <ComboBox x:Name="NumberModeBox" Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="None" Tag="None" />
+                <ComboBoxItem Content="Prefix" Tag="Prefix" />
+                <ComboBoxItem Content="Suffix" Tag="Suffix" />
+                <ComboBoxItem Content="Pre+Suffix" Tag="Pre+Suffix" />
+                <ComboBoxItem Content="Insert" Tag="Insert" />
+              </ComboBox>
+              <TextBlock x:Name="NumberAtLabel" Grid.Column="2" Text="at" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="NumberAtBox" Grid.Column="3" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+
+              <TextBlock x:Name="NumberStartLabel" Grid.Row="1" Text="Start" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="NumberStartBox" Grid.Row="1" Grid.Column="1" Minimum="-999999" Maximum="999999" Value="1" FormatString="0" ValueChanged="NumberOptionChanged" />
+              <TextBlock x:Name="NumberIncrLabel" Grid.Row="1" Grid.Column="2" Text="Incr." VerticalAlignment="Center" />
+              <NumericUpDown x:Name="NumberIncrementBox" Grid.Row="1" Grid.Column="3" Minimum="-999999" Maximum="999999" Value="1" FormatString="0" ValueChanged="NumberOptionChanged" />
+
+              <TextBlock x:Name="NumberPadLabel" Grid.Row="2" Text="Pad" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="NumberPaddingBox" Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="20" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+              <TextBlock x:Name="NumberSepLabel" Grid.Row="2" Grid.Column="2" Text="Sep." VerticalAlignment="Center" />
+              <TextBox x:Name="NumberSeparatorBox" Grid.Row="2" Grid.Column="3" TextChanged="OptionsChanged" />
+
+              <TextBlock x:Name="NumberBreakLabel" Grid.Row="3" Text="Break" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="NumberBreakBox" Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="999999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+              <StackPanel Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <TextBlock x:Name="NumberFolderLabel" Text="Folder" VerticalAlignment="Center" />
+                <CheckBox x:Name="NumberFolderCheck" MinWidth="0" Click="OptionsChanged" />
+              </StackPanel>
+
+              <TextBlock x:Name="NumberTypeLabel" Grid.Row="4" Grid.Column="2" Text="Type" VerticalAlignment="Center" />
+              <ComboBox x:Name="NumberTypeBox" Grid.Row="4" Grid.Column="3" HorizontalAlignment="Stretch" SelectedIndex="8" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="Base 2 (Binary)" Tag="Base 2 (Binary)" />
+                <ComboBoxItem Content="Base 3" Tag="Base 3" />
+                <ComboBoxItem Content="Base 4" Tag="Base 4" />
+                <ComboBoxItem Content="Base 5" Tag="Base 5" />
+                <ComboBoxItem Content="Base 6" Tag="Base 6" />
+                <ComboBoxItem Content="Base 7" Tag="Base 7" />
+                <ComboBoxItem Content="Base 8 (Octal)" Tag="Base 8 (Octal)" />
+                <ComboBoxItem Content="Base 9" Tag="Base 9" />
+                <ComboBoxItem Content="Base 10 (Decimal)" Tag="Base 10 (Decimal)" />
+                <ComboBoxItem Content="Base 11" Tag="Base 11" />
+                <ComboBoxItem Content="Base 12" Tag="Base 12" />
+                <ComboBoxItem Content="Base 13" Tag="Base 13" />
+                <ComboBoxItem Content="Base 14" Tag="Base 14" />
+                <ComboBoxItem Content="Base 15" Tag="Base 15" />
+                <ComboBoxItem Content="Base 16 (Hex)" Tag="Base 16 (Hex)" />
+                <ComboBoxItem Content="Base 17" Tag="Base 17" />
+                <ComboBoxItem Content="Base 18" Tag="Base 18" />
+                <ComboBoxItem Content="Base 19" Tag="Base 19" />
+                <ComboBoxItem Content="Base 20" Tag="Base 20" />
+                <ComboBoxItem Content="Base 21" Tag="Base 21" />
+                <ComboBoxItem Content="Base 22" Tag="Base 22" />
+                <ComboBoxItem Content="Base 23" Tag="Base 23" />
+                <ComboBoxItem Content="Base 24" Tag="Base 24" />
+                <ComboBoxItem Content="Base 25" Tag="Base 25" />
+                <ComboBoxItem Content="Base 26" Tag="Base 26" />
+                <ComboBoxItem Content="Base 27" Tag="Base 27" />
+                <ComboBoxItem Content="Base 28" Tag="Base 28" />
+                <ComboBoxItem Content="Base 29" Tag="Base 29" />
+                <ComboBoxItem Content="Base 30" Tag="Base 30" />
+                <ComboBoxItem Content="Base 31" Tag="Base 31" />
+                <ComboBoxItem Content="Base 32" Tag="Base 32" />
+                <ComboBoxItem Content="Base 33" Tag="Base 33" />
+                <ComboBoxItem Content="Base 34" Tag="Base 34" />
+                <ComboBoxItem Content="Base 35" Tag="Base 35" />
+                <ComboBoxItem Content="Base 36" Tag="Base 36" />
+                <ComboBoxItem Content="Roman" Tag="Roman" />
+                <ComboBoxItem Content="A-Z" Tag="Alphabet" />
+                <ComboBoxItem Content="a-z" Tag="AlphabetLower" />
+                <ComboBoxItem Content="Hebrew" Tag="Hebrew" />
+              </ComboBox>
+
+              <TextBlock x:Name="NumberCaseLabel" Grid.Row="4" Text="Case" VerticalAlignment="Center" />
+              <ComboBox x:Name="NumberCaseBox" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="Same" Tag="Same" />
+                <ComboBoxItem Content="Lower" Tag="Lower" />
+                <ComboBoxItem Content="Upper" Tag="Upper" />
+              </ComboBox>
+            </Grid>
+          </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Classes="section-card">
+          <StackPanel Spacing="4">
+                          <TextBlock x:Name="FolderTitle" HorizontalAlignment="Center" Text="7  Append folder name" Classes="section-title" />
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+              <TextBlock x:Name="FolderNameLabel" Text="Name" Width="48" VerticalAlignment="Center" />
+              <ComboBox x:Name="FolderModeBox" Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="None" Tag="None" />
+                <ComboBoxItem Content="Prefix" Tag="Prefix" />
+                <ComboBoxItem Content="Suffix" Tag="Suffix" />
+              </ComboBox>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="4">
+              <TextBlock x:Name="FolderSepLabel" Text="Sep." Width="48" VerticalAlignment="Center" />
+              <TextBox x:Name="FolderSeparatorBox" Grid.Column="1" TextChanged="OptionsChanged" />
+              <TextBlock x:Name="FolderLevelsLabel" Grid.Column="2" Text="Lev." VerticalAlignment="Center" />
+              <NumericUpDown x:Name="FolderLevelsBox" Grid.Column="3" Minimum="1" Maximum="20" Value="1" FormatString="0" ValueChanged="NumberOptionChanged" />
+            </Grid>
+          </StackPanel>
+        </Border>
+        </Grid>
+        <Grid Grid.Column="3" RowSpacing="4" RowDefinitions="*">
+        <Border Grid.Row="0" Classes="section-card">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="AddRemoveTitle" HorizontalAlignment="Center" Text="8  Remove" Classes="section-title" />
+            <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="4">
+              <TextBlock x:Name="FirstNLabel" Text="First n" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="RemoveFirstBox" Grid.Column="1" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+              <TextBlock x:Name="LastNLabel" Grid.Column="2" Text="Last n" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="RemoveLastBox" Grid.Column="3" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="4">
+              <TextBlock x:Name="FromLabel" Text="From" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="RemoveFromBox" Grid.Column="1" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+              <TextBlock x:Name="ToLabel" Grid.Column="2" Text="to" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="RemoveToBox" Grid.Column="3" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto,*,Auto" ColumnSpacing="4">
+              <AutoCompleteBox x:Name="RemoveCharsBox" Watermark="Chars" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="1"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenRemoveCharsHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+                          <AutoCompleteBox x:Name="RemoveWordsBox" Grid.Column="2" Watermark="Words" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+              <Button Grid.Column="3"  Width="26" MinHeight="28" VerticalAlignment="Stretch" Padding="0" Click="OpenRemoveWordsHistory" >
+                <Path Data="M 0,0 L 5,5 L 10,0" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Button>
+            
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,*" ColumnSpacing="4">
+              <TextBlock x:Name="CropLabel" Text="Crop" VerticalAlignment="Center" />
+              <ComboBox x:Name="CropModeBox" Grid.Column="1" SelectedIndex="0" HorizontalAlignment="Stretch" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="Before" Tag="Before" /><ComboBoxItem Content="After" Tag="After" />
+              </ComboBox>
+              <AutoCompleteBox x:Name="CropTextBox" Grid.Column="2" TextChanged="OptionsChanged"
+                               FilterMode="None" MinimumPrefixLength="0"
+                               IsTextCompletionEnabled="False" LostFocus="RememberHistory" KeyDown="HistoryKeyDown" />
+            </Grid>
+            <WrapPanel Orientation="Horizontal">
+              <CheckBox x:Name="RemoveDigitsCheck" Content="Digits" Margin="0,0,10,0" Click="OptionsChanged" />
+              <CheckBox x:Name="RemoveHighCheck" Content="High" Margin="0,0,10,0" Click="OptionsChanged" />
+              <CheckBox x:Name="RemoveDoubleSpacesCheck" Content="D/S" Margin="0,0,10,0" Click="OptionsChanged" />
+              <CheckBox x:Name="RemoveAccentsCheck" Content="Accents" Margin="0,0,10,0" Click="OptionsChanged" />
+              <CheckBox x:Name="RemoveSymbolsCheck" Content="Sym." Margin="0,0,10,0" Click="OptionsChanged" />
+              <CheckBox x:Name="TrimSpacesCheck" Content="Trim" Margin="0,0,10,0" Click="OptionsChanged" />
+              <CheckBox x:Name="TrimCharsCheck" Content="Chars" Click="OptionsChanged" />
+            </WrapPanel>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+              <TextBlock x:Name="LeadDotsLabel" Text="Lead Dots" VerticalAlignment="Center" />
+              <ComboBox x:Name="LeadDotsBox" Grid.Column="1" SelectedIndex="0" HorizontalAlignment="Stretch" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="None" Tag="None" /><ComboBoxItem Content="One" Tag="One" /><ComboBoxItem Content="All" Tag="All" />
+              </ComboBox>
+            </Grid>
+          </StackPanel>
+        </Border>
+        </Grid>
+        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Classes="section-card">
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="PreviewSafetyTitle" Text="Preview and safety" Classes="section-title" />
+            <TextBlock x:Name="PreviewSafetyText" Text="Only checked rows are changed. All selected items are validated before renaming. Files are staged to temporary names first, so safe swaps are supported." TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Classes="section-card">
+          <TextBlock x:Name="PreviewTipText" Text="Tip: select the folder you want to process, configure one or more steps, then review every green preview before applying." Classes="muted" TextWrapping="Wrap" />
+        </Border>
+      </Grid>
+    </ScrollViewer>
+  </Grid>
+</Window>

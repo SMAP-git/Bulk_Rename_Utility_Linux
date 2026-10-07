@@ -1,0 +1,56 @@
+name: Publish Docker image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version to package
+        required: true
+        default: '1.0.0'
+        type: string
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          version="$INPUT_VERSION"
+          if [[ -z "$version" ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Download Debian package
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          curl --fail --location --retry 3 \
+            "https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/releases/download/v${VERSION}/bulk-rename-utility_${VERSION}_amd64.deb" \
+            --output packaging/docker/bulk-rename-utility.deb
+
+      - name: Log in to GitHub Container Registry
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+
+      - name: Build and publish image
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          image="ghcr.io/smap-git/bulk-rename-utility"
+          docker build --pull --tag "$image:$VERSION" --tag "$image:latest" packaging/docker
+          docker push "$image:$VERSION"
+          docker push "$image:latest"

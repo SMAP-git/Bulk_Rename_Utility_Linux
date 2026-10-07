@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Bulk Rename Utility
+Comment=Preview and rename files in batches
+Exec=BulkRenameUtility
+Icon=bulk-rename-utility
+Terminal=false
+Categories=Utility;FileTools;
+StartupNotify=false
+StartupWMClass=bulk-rename-utility

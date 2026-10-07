@@ -1,0 +1,45 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fluent="using:Avalonia.Themes.Fluent"
+             x:Class="BulkRenameUtility.App"
+             RequestedThemeVariant="Default">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="AppBg">#EDF0F5</SolidColorBrush>
+          <SolidColorBrush x:Key="CardBg">#FFFFFF</SolidColorBrush>
+          <SolidColorBrush x:Key="CardBorder">#D5DCE6</SolidColorBrush>
+          <SolidColorBrush x:Key="TitleFg">#33445C</SolidColorBrush>
+          <SolidColorBrush x:Key="MutedFg">#708096</SolidColorBrush>
+          <SolidColorBrush x:Key="HeaderBg">#F7F9FC</SolidColorBrush>
+          <SolidColorBrush x:Key="HeaderBorder">#E5EAF0</SolidColorBrush>
+          <SolidColorBrush x:Key="RowBorder">#EDF0F4</SolidColorBrush>
+          <SolidColorBrush x:Key="GoodFg">#187B50</SolidColorBrush>
+          <SolidColorBrush x:Key="StatusFg">#53647A</SolidColorBrush>
+          <SolidColorBrush x:Key="BannerBg">#304B70</SolidColorBrush>
+          <SolidColorBrush x:Key="BadgeBg">#3D5E87</SolidColorBrush>
+          <SolidColorBrush x:Key="AccentBg">#31557F</SolidColorBrush>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="AppBg">#161A20</SolidColorBrush>
+          <SolidColorBrush x:Key="CardBg">#1F252E</SolidColorBrush>
+          <SolidColorBrush x:Key="CardBorder">#323B48</SolidColorBrush>
+          <SolidColorBrush x:Key="TitleFg">#D5DEEA</SolidColorBrush>
+          <SolidColorBrush x:Key="MutedFg">#8E9BAE</SolidColorBrush>
+          <SolidColorBrush x:Key="HeaderBg">#252C37</SolidColorBrush>
+          <SolidColorBrush x:Key="HeaderBorder">#323B48</SolidColorBrush>
+          <SolidColorBrush x:Key="RowBorder">#2B333E</SolidColorBrush>
+          <SolidColorBrush x:Key="GoodFg">#4FD197</SolidColorBrush>
+          <SolidColorBrush x:Key="StatusFg">#A8B5C6</SolidColorBrush>
+          <SolidColorBrush x:Key="BannerBg">#1F3250</SolidColorBrush>
+          <SolidColorBrush x:Key="BadgeBg">#2E4A72</SolidColorBrush>
+          <SolidColorBrush x:Key="AccentBg">#3A68A3</SolidColorBrush>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+  <Application.Styles>
+    <fluent:FluentTheme />
+  </Application.Styles>
+</Application>

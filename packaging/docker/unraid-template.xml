@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>BulkRenameUtility</Name>
+  <Repository>ghcr.io/smap-git/bulk-rename-utility:1.0.0</Repository>
+  <Support>https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/issues</Support>
+  <Project>https://github.com/SMAP-git/Bulk_Rename_Utility_Linux</Project>
+  <Icon>https://raw.githubusercontent.com/SMAP-git/Bulk_Rename_Utility_Linux/main/packaging/docker/unraid-icon.png</Icon>
+  <Registry>https://ghcr.io/</Registry>
+  <Network>bridge</Network>
+  <MyIP />
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Overview>Preview and batch rename files in a TigerVNC desktop with browser access through noVNC.</Overview>
+  <Category>Utility:Tools</Category>
+  <TemplateURL>https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/blob/main/packaging/docker/unraid-template.xml</TemplateURL>
+  <WebUI>http://[IP]:[PORT:6081]/vnc.html?autoconnect=true&amp;resize=scale</WebUI>
+  <PostArgs />
+  <CPUset />
+  <DateInstalled />
+  <DonateText />
+  <DonateLink />
+  <Requires />
+  <ExtraParams>--user=99:100</ExtraParams>
+  <Config Name="VNC Port" Target="5902" Default="5902" Mode="tcp" Description="Native VNC access. Keep this port on a trusted network." Type="Port" Display="always" Required="true" Mask="false">5902</Config>
+  <Config Name="VNC WebUI Port" Target="6081" Default="6081" Mode="tcp" Description="Browser desktop through noVNC." Type="Port" Display="always" Required="true" Mask="false">6081</Config>
+  <Config Name="VNC Password" Target="VNC_PASSWORD" Default="" Mode="" Description="Optional, 6-8 characters. Without one, anyone who reaches the VNC port can control the session." Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="VNC Geometry" Target="VNC_GEOMETRY" Default="1440x900" Mode="" Description="Virtual desktop resolution." Type="Variable" Display="advanced" Required="true" Mask="false">1440x900</Config>
+  <Config Name="App configuration" Target="/config" Default="/mnt/user/appdata/BulkRenameUtility" Mode="rw" Description="Persists application configuration." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/BulkRenameUtility</Config>
+  <Config Name="Files to rename" Target="/media" Default="/mnt/user/Media" Mode="rw" Description="Open this directory in the file browser. Read/write access is needed to rename files." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/Media</Config>
+  <Config Name="Default folder" Target="BULKRENAME_DEFAULT_PATH" Default="/media" Mode="" Description="Folder opened when the app starts." Type="Variable" Display="advanced" Required="true" Mask="false">/media</Config>
+  <Config Name="HOME" Target="HOME" Default="/config" Mode="" Description="Keep the app configuration directory mounted here." Type="Variable" Display="advanced" Required="true" Mask="false">/config</Config>
+</Container>

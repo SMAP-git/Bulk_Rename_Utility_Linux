@@ -1,0 +1,9 @@
+artifacts/
+**/bin/
+**/obj/
+packaging/flatpak/.build-input/
+packaging/docker/*.deb
+.flatpak-builder/
+*.user
+.vs/
+.idea/

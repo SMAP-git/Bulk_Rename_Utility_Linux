@@ -1,0 +1,24 @@
+app-id: io.github.smapgit.bulkrenameutility
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+command: bulk-rename-utility
+finish-args:
+  - --socket=x11
+  - --socket=wayland
+  - --share=ipc
+  - --device=dri
+  - --filesystem=host
+modules:
+  - name: bulk-rename-utility
+    buildsystem: simple
+    build-commands:
+      - install -d /app/bin /app/lib/bulk-rename-utility /app/share/applications /app/share/metainfo /app/share/icons/hicolor/512x512/apps
+      - cp -a publish/. /app/lib/bulk-rename-utility/
+      - install -m 0755 bulk-rename-utility-launcher /app/bin/bulk-rename-utility
+      - install -m 0644 bulk-rename-utility.desktop /app/share/applications/io.github.smapgit.bulkrenameutility.desktop
+      - install -m 0644 io.github.smapgit.bulkrenameutility.metainfo.xml /app/share/metainfo/io.github.smapgit.bulkrenameutility.metainfo.xml
+      - install -m 0644 bru-linux.png /app/share/icons/hicolor/512x512/apps/io.github.smapgit.bulkrenameutility.png
+    sources:
+      - type: dir
+        path: .build-input

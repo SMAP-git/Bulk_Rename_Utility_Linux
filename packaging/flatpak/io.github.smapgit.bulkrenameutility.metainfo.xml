@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.smapgit.bulkrenameutility</id>
+  <name>Bulk Rename Utility</name>
+  <summary>Preview and rename files in batches</summary>
+  <developer id="io.github.smapgit">
+    <name>SMAP</name>
+  </developer>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Unlicense</project_license>
+  <description>
+    <p>Bulk Rename Utility lets you preview and rename many files at once, with options for replacing, removing, numbering, casing and more.</p>
+  </description>
+  <launchable type="desktop-id">io.github.smapgit.bulkrenameutility.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image type="source" width="1490" height="1027">https://raw.githubusercontent.com/SMAP-git/Bulk_Rename_Utility_Linux/main/docs/images/BulkRenameUtility.png</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/SMAP-git/Bulk_Rename_Utility_Linux</url>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.0.0" date="2026-10-07" />
+  </releases>
+</component>

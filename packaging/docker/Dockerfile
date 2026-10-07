@@ -4,10 +4,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 COPY bulk-rename-utility.deb /tmp/bulk-rename-utility.deb
 
-RUN apt-get update \
+RUN sed -i 's/^Components: main$/Components: main universe/' /etc/apt/sources.list.d/ubuntu.sources \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates novnc openbox tigervnc-standalone-server \
-        tigervnc-tools websockify x11-xserver-utils x11-utils \
+        ca-certificates novnc openbox python3-xdg tigervnc-standalone-server \
+        tigervnc-tools websockify \
         /tmp/bulk-rename-utility.deb \
     && rm -f /tmp/bulk-rename-utility.deb \
     && rm -rf /var/lib/apt/lists/*
@@ -17,6 +18,7 @@ RUN useradd --create-home --shell /usr/sbin/nologin app \
     && chown app:app /config /media \
     && chmod 1777 /tmp/.X11-unix
 
+COPY openbox-rc.xml /etc/xdg/openbox/rc.xml
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh
 

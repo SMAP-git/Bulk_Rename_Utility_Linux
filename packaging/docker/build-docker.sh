@@ -19,6 +19,7 @@ fi
 
 cp "$ROOT_DIR/packaging/docker/Dockerfile" "$BUILD_DIR/Dockerfile"
 cp "$ROOT_DIR/packaging/docker/docker-entrypoint.sh" "$BUILD_DIR/docker-entrypoint.sh"
+cp "$ROOT_DIR/packaging/docker/openbox-rc.xml" "$BUILD_DIR/openbox-rc.xml"
 cp "$DEB_PACKAGE" "$BUILD_DIR/bulk-rename-utility.deb"
 docker build --tag "$IMAGE_NAME" "$BUILD_DIR"
 printf 'Created Docker image %s\n' "$IMAGE_NAME"

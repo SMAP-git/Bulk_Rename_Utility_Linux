@@ -22,4 +22,10 @@
     <ProjectReference Include="..\..\src\BulkRename.Core\BulkRename.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../src/BulkRenameUtility/Languages/*.json"
+          Link="Languages/%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

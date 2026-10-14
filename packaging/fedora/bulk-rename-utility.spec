@@ -1,5 +1,5 @@
 Name:           bulk-rename-utility
-Version:        %{?pkgversion}%{!?pkgversion:1.0.1}
+Version:        %{?pkgversion}%{!?pkgversion:1.0.2}
 Release:        1%{?dist}
 Summary:        Preview-first batch file renaming utility
 License:        Unlicense

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using BulkRename.Core;
 
 namespace BulkRenameUtility;
 
@@ -12,12 +13,13 @@ public sealed class PreviewRow : INotifyPropertyChanged
     private string _folderTypeLabel = "Folder";
     private string _fileTypeLabel = "file";
 
-    public PreviewRow(string path, bool isDirectory, long size, DateTime modified)
+    public PreviewRow(string path, bool isDirectory, long size, DateTime modified, FileDateTimes? dates = null)
     {
         Path = path;
         IsDirectory = isDirectory;
         Size = size;
         Modified = modified;
+        Dates = dates;
     }
 
     public string Path { get; }
@@ -25,6 +27,7 @@ public sealed class PreviewRow : INotifyPropertyChanged
     public bool IsDirectory { get; }
     public long Size { get; }
     public DateTime Modified { get; }
+    public FileDateTimes? Dates { get; }
     public string SizeDisplay => IsDirectory ? "—" : FormatSize(Size);
     public string TypeDisplay => IsDirectory
         ? _folderTypeLabel

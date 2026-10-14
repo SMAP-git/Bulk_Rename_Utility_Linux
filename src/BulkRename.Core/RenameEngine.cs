@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -5,7 +6,9 @@ namespace BulkRename.Core;
 
 public static class RenameEngine
 {
-    public static string Preview(string fileName, RenameOptions options, int sequence, string? directory = null)
+    public static string Preview(
+        string fileName, RenameOptions options, int sequence, string? directory = null,
+        FileDateTimes? dates = null, DateTime? currentDate = null)
     {
         ArgumentNullException.ThrowIfNull(fileName);
         ArgumentNullException.ThrowIfNull(options);
@@ -93,6 +96,8 @@ public static class RenameEngine
             };
         }
 
+        stem = AddDate(stem, options, dates, currentDate);
+
         extension = options.ExtensionMode switch
         {
             "UPPERCASE" => extension.ToUpperInvariant(),
@@ -107,6 +112,132 @@ public static class RenameEngine
         };
 
         return stem + extension;
+    }
+
+    private static string AddDate(string stem, RenameOptions options, FileDateTimes? dates, DateTime? currentDate)
+    {
+        if (!options.DateEnabled || (options.DateMode == "None" && options.DateInsertPosition == 0))
+        {
+            return stem;
+        }
+
+        ArgumentOutOfRangeException.ThrowIfNegative(options.DateInsertPosition);
+
+        var date = options.DateType switch
+        {
+            "Created" => dates?.Created ?? throw new ArgumentException("Creation date is unavailable."),
+            "Modified" => dates?.Modified ?? throw new ArgumentException("Modification date is unavailable."),
+            "Accessed" => dates?.Accessed ?? throw new ArgumentException("Access date is unavailable."),
+            "Current" => currentDate ?? DateTime.Now,
+            _ => throw new ArgumentException($"Unknown date type: {options.DateType}")
+        };
+        if (date == DateTime.MinValue)
+        {
+            throw new ArgumentException($"The {options.DateType} date is unavailable.");
+        }
+
+        date = date.AddDays(options.DateOffsetDays);
+        string formatted;
+        if (options.DateFormat == "Custom")
+        {
+            if (string.IsNullOrEmpty(options.DateCustomFormat))
+            {
+                throw new FormatException("Enter a custom date format, for example %Y-%m-%d.");
+            }
+
+            formatted = FormatCustomDate(date, options.DateCustomFormat);
+        }
+        else
+        {
+            var segments = options.DateFormat switch
+            {
+                "DMY" => new[] { "dd", "MM", "y" },
+                "MDY" => new[] { "MM", "dd", "y" },
+                "YMD" => new[] { "y", "MM", "dd" },
+                "YDM" => new[] { "y", "dd", "MM" },
+                "MYD" => new[] { "MM", "y", "dd" },
+                "DYM" => new[] { "dd", "y", "MM" },
+                "HM" => new[] { "HH", "mm" },
+                "HMS" => new[] { "HH", "mm", "ss" },
+                "DMYHMS" => new[] { "dd", "MM", "y", "HH", "mm", "ss" },
+                "MDYHMS" => new[] { "MM", "dd", "y", "HH", "mm", "ss" },
+                "YMDHMS" => new[] { "y", "MM", "dd", "HH", "mm", "ss" },
+                _ => throw new FormatException($"Unknown date format: {options.DateFormat}")
+            };
+            formatted = string.Join(options.DateSegmentSeparator, segments.Select(segment =>
+                date.ToString(segment == "y" ? options.DateCentury ? "yyyy" : "yy" : segment, CultureInfo.InvariantCulture)));
+        }
+
+        if (options.DateInsertPosition > 0)
+        {
+            return stem.Insert(Math.Min(options.DateInsertPosition - 1, stem.Length), formatted + options.DateSeparator);
+        }
+
+        return options.DateMode switch
+        {
+            "Prefix" => formatted + options.DateSeparator + stem,
+            "Suffix" => stem + options.DateSeparator + formatted,
+            "Replace" => formatted,
+            _ => throw new ArgumentException($"Unknown date mode: {options.DateMode}")
+        };
+    }
+
+    private static string FormatCustomDate(DateTime date, string format)
+    {
+        var result = new StringBuilder();
+        for (var index = 0; index < format.Length; index++)
+        {
+            if (format[index] != '%')
+            {
+                result.Append(format[index]);
+                continue;
+            }
+
+            if (++index == format.Length)
+            {
+                throw new FormatException("A custom date format cannot end with %.");
+            }
+
+            var token = format[index];
+            if (token == '%')
+            {
+                result.Append('%');
+                continue;
+            }
+
+            var pattern = token switch
+            {
+                'a' => "ddd",
+                'A' => "dddd",
+                'b' or 'h' => "MMM",
+                'B' => "MMMM",
+                'd' => "dd",
+                'm' => "MM",
+                'y' => "yy",
+                'Y' => "yyyy",
+                'H' => "HH",
+                'I' => "hh",
+                'M' => "mm",
+                'S' => "ss",
+                'p' => "tt",
+                'F' => "yyyy-MM-dd",
+                'T' => "HH:mm:ss",
+                'R' => "HH:mm",
+                'j' => null,
+                'w' => null,
+                'u' => null,
+                _ => throw new FormatException($"Unsupported custom date token: %{token}")
+            };
+            result.Append(token switch
+            {
+                'j' => date.DayOfYear.ToString("000", CultureInfo.InvariantCulture),
+                'w' => ((int)date.DayOfWeek).ToString(CultureInfo.InvariantCulture),
+                'u' => (date.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)date.DayOfWeek).ToString(CultureInfo.InvariantCulture),
+                _ => date.ToString(pattern, CultureInfo.InvariantCulture)
+            });
+        }
+
+        return result.ToString();
     }
 
     private static string AppendFolderName(string stem, RenameOptions options, string? directory)

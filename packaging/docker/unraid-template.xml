@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>BulkRenameUtility</Name>
-  <Repository>ghcr.io/smap-git/bulk-rename-utility:1.0.1</Repository>
+  <Repository>ghcr.io/smap-git/bulk-rename-utility:1.0.2</Repository>
   <Support>https://github.com/SMAP-git/Bulk_Rename_Utility_Linux/issues</Support>
   <Project>https://github.com/SMAP-git/Bulk_Rename_Utility_Linux</Project>
   <Icon>https://raw.githubusercontent.com/SMAP-git/Bulk_Rename_Utility_Linux/main/packaging/docker/unraid-icon.png</Icon>

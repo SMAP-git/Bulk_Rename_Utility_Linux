@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-VERSION="${VERSION:-1.0.1}"
+VERSION="${VERSION:-1.0.2}"
 ARCHITECTURE="$(dpkg --print-architecture)"
 
 if [[ "$ARCHITECTURE" != "amd64" ]]; then

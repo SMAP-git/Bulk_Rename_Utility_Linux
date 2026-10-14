@@ -73,6 +73,23 @@
     <Style Selector="Button">
       <Setter Property="MinHeight" Value="34" />
     </Style>
+    <Style Selector="Button.section-reset">
+      <Setter Property="Width" Value="20" />
+      <Setter Property="Height" Value="20" />
+      <Setter Property="MinWidth" Value="20" />
+      <Setter Property="MinHeight" Value="20" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Foreground" Value="{DynamicResource TitleFg}" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.section-reset:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
   </Window.Styles>
 
   <Grid x:Name="RootGrid" RowDefinitions="Auto,Auto,*,6,250">
@@ -196,7 +213,10 @@
         <Grid Grid.Column="0" RowSpacing="4" RowDefinitions="Auto,Auto,*">
         <Border Grid.Row="0" Classes="section-card">
           <StackPanel Spacing="4">
-            <TextBlock x:Name="RegexTitle" HorizontalAlignment="Center" Text="1  Regular expression" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="RegexTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="1  Regular expression" Classes="section-title" />
+              <Button x:Name="ResetRegexButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetRegex" />
+            </Grid>
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
               <AutoCompleteBox x:Name="RegexMatchBox" Watermark="Match pattern" TextChanged="OptionsChanged"
                                FilterMode="None" MinimumPrefixLength="0"
@@ -221,7 +241,10 @@
         </Border>
         <Border Grid.Row="1" Classes="section-card">
           <StackPanel Spacing="4">
-            <TextBlock x:Name="NameCaseTitle" HorizontalAlignment="Center" Text="2  Name and case" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="NameCaseTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="2  Name and case" Classes="section-title" />
+              <Button x:Name="ResetNameCaseButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetNameCase" />
+            </Grid>
             <Grid ColumnDefinitions="*,*" ColumnSpacing="4">
 <ComboBox x:Name="NameModeBox" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
               <ComboBoxItem Content="Keep" Tag="Keep" /><ComboBoxItem Content="Fixed" Tag="Fixed" />
@@ -245,7 +268,10 @@
         </Border>
         <Border Grid.Row="2" Classes="section-card">
           <StackPanel Spacing="4">
-            <TextBlock x:Name="ExtensionTitle" HorizontalAlignment="Center" Text="3  Extension" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="ExtensionTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="3  Extension" Classes="section-title" />
+              <Button x:Name="ResetExtensionButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetExtension" />
+            </Grid>
             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
               <ComboBox x:Name="ExtensionModeBox" SelectedIndex="0" SelectionChanged="OptionsChanged">
                 <ComboBoxItem Content="Same" Tag="Same" /><ComboBoxItem Content="Lower" Tag="lowercase" /><ComboBoxItem Content="Upper" Tag="UPPERCASE" />
@@ -259,7 +285,10 @@
         <Grid Grid.Column="1" RowSpacing="4" RowDefinitions="Auto,*">
         <Border Grid.Row="0" Classes="section-card">
           <StackPanel Spacing="4">
-            <TextBlock x:Name="ReplaceTitle" HorizontalAlignment="Center" Text="4  Replace text" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="ReplaceTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="4  Replace text" Classes="section-title" />
+              <Button x:Name="ResetReplaceButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetReplace" />
+            </Grid>
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
               <AutoCompleteBox x:Name="ReplaceBox" Watermark="Find" TextChanged="OptionsChanged"
                                FilterMode="None" MinimumPrefixLength="0"
@@ -284,7 +313,10 @@
         </Border>
         <Border Grid.Row="1" Classes="section-card">
           <StackPanel Spacing="4">
-            <TextBlock x:Name="AddTitle" HorizontalAlignment="Center" Text="5  Add" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="AddTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="5  Add" Classes="section-title" />
+              <Button x:Name="ResetAddButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetAdd" />
+            </Grid>
             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
               <TextBlock x:Name="PrefixLabel" Text="Prefix" Width="48" VerticalAlignment="Center" />
               <AutoCompleteBox x:Name="PrefixBox" Grid.Column="1" TextChanged="OptionsChanged"
@@ -322,7 +354,10 @@
         <Grid Grid.Column="2" RowSpacing="4" RowDefinitions="Auto,*">
         <Border Grid.Row="0" Classes="section-card">
           <StackPanel Spacing="4">
-                          <TextBlock x:Name="NumberingTitle" HorizontalAlignment="Center" Text="6  Numbering" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="NumberingTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="6  Numbering" Classes="section-title" />
+              <Button x:Name="ResetNumberingButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetNumbering" />
+            </Grid>
             <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="4" RowSpacing="4"
                   RowDefinitions="Auto,Auto,Auto,Auto,Auto">
               <TextBlock x:Name="NumberModeLabel" Text="Mode" VerticalAlignment="Center" />
@@ -407,7 +442,10 @@
         </Border>
         <Border Grid.Row="1" Classes="section-card">
           <StackPanel Spacing="4">
-                          <TextBlock x:Name="FolderTitle" HorizontalAlignment="Center" Text="7  Append folder name" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="FolderTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="7  Append folder name" Classes="section-title" />
+              <Button x:Name="ResetFolderButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetFolder" />
+            </Grid>
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
               <TextBlock x:Name="FolderNameLabel" Text="Name" Width="48" VerticalAlignment="Center" />
               <ComboBox x:Name="FolderModeBox" Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
@@ -428,7 +466,10 @@
         <Grid Grid.Column="3" RowSpacing="4" RowDefinitions="*">
         <Border Grid.Row="0" Classes="section-card">
           <StackPanel Spacing="4">
-            <TextBlock x:Name="AddRemoveTitle" HorizontalAlignment="Center" Text="8  Remove" Classes="section-title" />
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="AddRemoveTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="8  Remove" Classes="section-title" />
+              <Button x:Name="ResetRemoveButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetRemove" />
+            </Grid>
             <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="4">
               <TextBlock x:Name="FirstNLabel" Text="First n" VerticalAlignment="Center" />
               <NumericUpDown x:Name="RemoveFirstBox" Grid.Column="1" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
@@ -483,14 +524,63 @@
           </StackPanel>
         </Border>
         </Grid>
-        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Classes="section-card">
+        <Border x:Name="AutoDateCard" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Classes="section-card">
+          <StackPanel Spacing="4">
+            <Grid ColumnDefinitions="20,*,20">
+              <TextBlock x:Name="AutoDateTitle" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="9  Auto Date" Classes="section-title" />
+              <Button x:Name="ResetDateButton" Grid.Column="2" Classes="section-reset" Content="r" Click="ResetDate" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,*" ColumnSpacing="4" RowSpacing="4" RowDefinitions="Auto,Auto,Auto">
+              <TextBlock x:Name="DateModeLabel" Text="Mode" VerticalAlignment="Center" />
+              <ComboBox x:Name="DateModeBox" Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="None" Tag="None" />
+                <ComboBoxItem Content="Prefix" Tag="Prefix" />
+                <ComboBoxItem Content="Suffix" Tag="Suffix" />
+                <ComboBoxItem Content="Replace" Tag="Replace" />
+              </ComboBox>
+              <TextBlock x:Name="DateTypeLabel" Grid.Column="2" Text="Type" VerticalAlignment="Center" />
+              <ComboBox x:Name="DateTypeBox" Grid.Column="3" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="Creation" Tag="Created" />
+                <ComboBoxItem Content="Modified" Tag="Modified" />
+                <ComboBoxItem Content="Accessed" Tag="Accessed" />
+                <ComboBoxItem Content="Current" Tag="Current" />
+              </ComboBox>
+              <TextBlock x:Name="DateFormatLabel" Grid.Row="1" Text="Fmt" VerticalAlignment="Center" />
+              <ComboBox x:Name="DateFormatBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="OptionsChanged">
+                <ComboBoxItem Content="DMY" Tag="DMY" />
+                <ComboBoxItem Content="MDY" Tag="MDY" />
+                <ComboBoxItem Content="YMD" Tag="YMD" />
+                <ComboBoxItem Content="YDM" Tag="YDM" />
+                <ComboBoxItem Content="MYD" Tag="MYD" />
+                <ComboBoxItem Content="DYM" Tag="DYM" />
+                <ComboBoxItem Content="HM" Tag="HM" />
+                <ComboBoxItem Content="HMS" Tag="HMS" />
+                <ComboBoxItem Content="DMY HMS" Tag="DMYHMS" />
+                <ComboBoxItem Content="MDY HMS" Tag="MDYHMS" />
+                <ComboBoxItem Content="YMD HMS" Tag="YMDHMS" />
+                <ComboBoxItem Content="Custom" Tag="Custom" />
+              </ComboBox>
+              <TextBlock x:Name="DateAtLabel" Grid.Row="1" Grid.Column="2" Text="at pos." VerticalAlignment="Center" />
+              <NumericUpDown x:Name="DateAtBox" Grid.Row="1" Grid.Column="3" Minimum="0" Maximum="9999" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+              <TextBlock x:Name="DateSeparatorLabel" Grid.Column="4" Text="Sep." VerticalAlignment="Center" />
+              <TextBox x:Name="DateSeparatorBox" Grid.Column="5" TextChanged="OptionsChanged" />
+              <TextBlock x:Name="DateSegmentLabel" Grid.Row="1" Grid.Column="4" Text="Seg." VerticalAlignment="Center" />
+              <TextBox x:Name="DateSegmentBox" Grid.Row="1" Grid.Column="5" TextChanged="OptionsChanged" />
+              <TextBlock x:Name="DateCustomLabel" Grid.Row="2" Text="Custom" VerticalAlignment="Center" />
+              <TextBox x:Name="DateCustomBox" Grid.Row="2" Grid.Column="1" Watermark="%Y-%m-%d" TextChanged="OptionsChanged" />
+              <TextBlock x:Name="DateOffsetLabel" Grid.Row="2" Grid.Column="2" Text="Off. (days)" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="DateOffsetBox" Grid.Row="2" Grid.Column="3" Minimum="-3650000" Maximum="3650000" Value="0" FormatString="0" ValueChanged="NumberOptionChanged" />
+              <TextBlock x:Name="DateCenturyLabel" Grid.Row="2" Grid.Column="4" Text="Cent." VerticalAlignment="Center" />
+              <CheckBox x:Name="DateCenturyCheck" Grid.Row="2" Grid.Column="5" MinWidth="0" Click="OptionsChanged" />
+            </Grid>
+          </StackPanel>
+        </Border>
+        <Border x:Name="PreviewSafetyCard" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Classes="section-card">
           <StackPanel Spacing="4">
             <TextBlock x:Name="PreviewSafetyTitle" Text="Preview and safety" Classes="section-title" />
             <TextBlock x:Name="PreviewSafetyText" Text="Only checked rows are changed. All selected items are validated before renaming. Files are staged to temporary names first, so safe swaps are supported." TextWrapping="Wrap" />
+            <TextBlock x:Name="PreviewTipText" Text="Tip: select the folder you want to process, configure one or more steps, then review every green preview before applying." Classes="muted" TextWrapping="Wrap" />
           </StackPanel>
-        </Border>
-        <Border Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Classes="section-card">
-          <TextBlock x:Name="PreviewTipText" Text="Tip: select the folder you want to process, configure one or more steps, then review every green preview before applying." Classes="muted" TextWrapping="Wrap" />
         </Border>
       </Grid>
     </ScrollViewer>

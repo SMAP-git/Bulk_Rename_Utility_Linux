@@ -1,5 +1,5 @@
 pkgname=bulk-rename-utility
-pkgver="${VERSION:-1.0.1}"
+pkgver="${VERSION:-1.0.2}"
 pkgrel=1
 pkgdesc='Preview-first batch file renaming utility'
 arch=('x86_64')

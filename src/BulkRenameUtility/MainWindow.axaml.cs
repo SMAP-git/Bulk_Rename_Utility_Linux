@@ -96,7 +96,8 @@ public partial class MainWindow : Window
                             fullEntryPath,
                             isDirectory,
                             isDirectory ? 0 : ((FileInfo)info).Length,
-                            info.LastWriteTime);
+                            info.LastWriteTime,
+                            new FileDateTimes(info.CreationTime, info.LastWriteTime, info.LastAccessTime));
                     })
                     .ToList();
 
@@ -327,7 +328,16 @@ public partial class MainWindow : Window
                 var mode when mode is "Title" or "Fixed" or "Extra" or "Remove" => mode,
                 _ => "Same"
             },
-            ExtensionText = ExtensionTextBox.Text ?? string.Empty
+            ExtensionText = ExtensionTextBox.Text ?? string.Empty,
+            DateMode = SelectedComboValue(DateModeBox),
+            DateType = SelectedComboValue(DateTypeBox),
+            DateFormat = SelectedComboValue(DateFormatBox),
+            DateSeparator = DateSeparatorBox.Text ?? string.Empty,
+            DateSegmentSeparator = DateSegmentBox.Text ?? string.Empty,
+            DateCustomFormat = DateCustomBox.Text ?? string.Empty,
+            DateCentury = DateCenturyCheck.IsChecked == true,
+            DateOffsetDays = (int)(DateOffsetBox.Value ?? 0),
+            DateInsertPosition = (int)(DateAtBox.Value ?? 0)
         };
     }
 
@@ -346,6 +356,7 @@ public partial class MainWindow : Window
         try
         {
             var options = ReadOptions();
+            var currentDate = DateTime.Now;
             var sequence = 0;
             string? lastDirectory = null;
             foreach (var row in _rows)
@@ -365,7 +376,7 @@ public partial class MainWindow : Window
                 }
 
                 sequence++;
-                row.NewName = RenameEngine.Preview(row.Name, options, sequence, dir);
+                row.NewName = RenameEngine.Preview(row.Name, options, sequence, dir, row.Dates, currentDate);
                 row.SetStatus(row.NewName == row.Name ? "unchanged" : "ready",
                     Tr(row.NewName == row.Name ? "unchanged" : "ready"));
             }
@@ -408,6 +419,113 @@ public partial class MainWindow : Window
             RefreshPreview(sender, e);
         }
     }
+
+    private void ResetOptions(Action reset)
+    {
+        var wasReady = _ready;
+        _ready = false;
+        try
+        {
+            reset();
+        }
+        finally
+        {
+            _ready = wasReady;
+        }
+
+        OptionsChanged(this, new RoutedEventArgs());
+    }
+
+    private void ResetRegex(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        RegexMatchBox.Text = string.Empty;
+        RegexReplaceBox.Text = string.Empty;
+        RegexIgnoreCaseCheck.IsChecked = false;
+        RegexExtensionCheck.IsChecked = false;
+    });
+
+    private void ResetNameCase(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        NameModeBox.SelectedIndex = 0;
+        CaseModeBox.SelectedIndex = 0;
+        NameValueBox.Text = string.Empty;
+    });
+
+    private void ResetExtension(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        ExtensionModeBox.SelectedIndex = 0;
+        ExtensionTextBox.Text = string.Empty;
+    });
+
+    private void ResetReplace(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        ReplaceBox.Text = string.Empty;
+        WithBox.Text = string.Empty;
+        ReplaceIgnoreCaseCheck.IsChecked = false;
+        ReplaceFirstCheck.IsChecked = false;
+    });
+
+    private void ResetAdd(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        PrefixBox.Text = string.Empty;
+        InsertBox.Text = string.Empty;
+        InsertPosBox.Value = 0;
+        SuffixBox.Text = string.Empty;
+    });
+
+    private void ResetNumbering(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        NumberModeBox.SelectedIndex = 0;
+        NumberAtBox.Value = 0;
+        NumberStartBox.Value = 1;
+        NumberIncrementBox.Value = 1;
+        NumberPaddingBox.Value = 0;
+        NumberSeparatorBox.Text = string.Empty;
+        NumberBreakBox.Value = 0;
+        NumberFolderCheck.IsChecked = false;
+        NumberTypeBox.SelectedIndex = 8;
+        NumberCaseBox.SelectedIndex = 0;
+    });
+
+    private void ResetFolder(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        FolderModeBox.SelectedIndex = 0;
+        FolderSeparatorBox.Text = string.Empty;
+        FolderLevelsBox.Value = 1;
+    });
+
+    private void ResetRemove(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        RemoveFirstBox.Value = 0;
+        RemoveLastBox.Value = 0;
+        RemoveFromBox.Value = 0;
+        RemoveToBox.Value = 0;
+        RemoveCharsBox.Text = string.Empty;
+        RemoveWordsBox.Text = string.Empty;
+        CropModeBox.SelectedIndex = 0;
+        CropTextBox.Text = string.Empty;
+        RemoveDigitsCheck.IsChecked = false;
+        RemoveHighCheck.IsChecked = false;
+        RemoveDoubleSpacesCheck.IsChecked = false;
+        RemoveAccentsCheck.IsChecked = false;
+        RemoveSymbolsCheck.IsChecked = false;
+        TrimSpacesCheck.IsChecked = false;
+        TrimCharsCheck.IsChecked = false;
+        LeadDotsBox.SelectedIndex = 0;
+    });
+
+    private void ResetDate(object? sender, RoutedEventArgs e) => ResetOptions(() =>
+    {
+        DateModeBox.SelectedIndex = 0;
+        DateTypeBox.SelectedIndex = 0;
+        DateFormatBox.SelectedIndex = 0;
+        DateAtBox.Value = 0;
+        DateSeparatorBox.Text = string.Empty;
+        DateSegmentBox.Text = string.Empty;
+        DateCustomBox.Text = string.Empty;
+        DateCenturyCheck.IsChecked = false;
+        DateOffsetBox.Value = 0;
+    });
 
     private void LoadLanguageCatalogues()
     {
@@ -600,6 +718,48 @@ public partial class MainWindow : Window
         InsertLabel.Text = Tr("insert");
         InsertPosLabel.Text = Tr("atPos");
         SuffixLabel.Text = Tr("suffix");
+        AutoDateTitle.Text = $"9  {Tr("autoDate")}";
+        DateModeLabel.Text = Tr("mode");
+        DateTypeLabel.Text = Tr("typeLabel");
+        DateFormatLabel.Text = Tr("dateFormat");
+        DateAtLabel.Text = Tr("atPos");
+        DateSeparatorLabel.Text = Tr("sep");
+        DateSegmentLabel.Text = Tr("dateSegment");
+        DateCustomLabel.Text = Tr("dateCustom");
+        DateCenturyLabel.Text = Tr("dateCentury");
+        Avalonia.Automation.AutomationProperties.SetName(DateCenturyCheck, Tr("dateCentury"));
+        DateOffsetLabel.Text = Tr("dateOffset");
+        ApplyOptionTooltips();
+        ToolTip.SetTip(DateCustomBox, Tr("dateCustomTip"));
+        ToolTip.SetTip(DateSeparatorBox, Tr("dateSeparatorTip"));
+        ToolTip.SetTip(DateSegmentBox, Tr("dateSegmentTip"));
+        ToolTip.SetTip(DateCenturyCheck, Tr("dateCenturyTip"));
+        ToolTip.SetTip(DateCenturyLabel, Tr("dateCenturyTip"));
+        ToolTip.SetTip(DateTypeBox, Tr("dateTypeTip"));
+        LocalizeCombo(DateModeBox, ["none", "prefix", "suffix", "replaceText"]);
+        LocalizeCombo(DateTypeBox, ["dateCreated", "dateModified", "dateAccessed", "dateCurrent"]);
+        if (DateFormatBox.Items[11] is ComboBoxItem customDateItem)
+        {
+            customDateItem.Content = Tr("dateCustom");
+        }
+
+        Button[] resetButtons =
+        [
+            ResetRegexButton, ResetNameCaseButton, ResetExtensionButton, ResetReplaceButton,
+            ResetAddButton, ResetNumberingButton, ResetFolderButton, ResetRemoveButton, ResetDateButton
+        ];
+        TextBlock[] sectionTitles =
+        [
+            RegexTitle, NameCaseTitle, ExtensionTitle, ReplaceTitle,
+            AddTitle, NumberingTitle, FolderTitle, AddRemoveTitle, AutoDateTitle
+        ];
+        for (var index = 0; index < resetButtons.Length; index++)
+        {
+            var description = string.Format(Tr("resetSection"), sectionTitles[index].Text);
+            ToolTip.SetTip(resetButtons[index], description);
+            Avalonia.Automation.AutomationProperties.SetName(resetButtons[index], description);
+        }
+
         PreviewSafetyTitle.Text = Tr("previewSafety");
         PreviewSafetyText.Text = Tr("onlyChecked");
         PreviewTipText.Text = Tr("safetyTip");
@@ -616,6 +776,7 @@ public partial class MainWindow : Window
         ReplaceIgnoreCaseCheck.Content = Tr("matchCase");
         ReplaceFirstCheck.Content = Tr("firstOnly");
         NameValueBox.Watermark = Tr("nameValue");
+        ExtensionTextBox.Watermark = Tr("extensionText");
         RemoveCharsBox.Watermark = Tr("removeChars");
         RemoveWordsBox.Watermark = Tr("removeWords");
         CropLabel.Text = Tr("crop");
@@ -645,6 +806,41 @@ public partial class MainWindow : Window
         }
 
         RefreshPreview(this, new RoutedEventArgs());
+    }
+
+    private void ApplyOptionTooltips()
+    {
+        (Control Control, string Key)[] tooltips =
+        [
+            (RegexMatchBox, "regexMatchTip"), (RegexReplaceBox, "regexReplaceTip"),
+            (RegexIgnoreCaseCheck, "regexIgnoreCaseTip"), (RegexExtensionCheck, "regexExtensionTip"),
+            (NameModeBox, "nameModeTip"), (CaseModeBox, "caseModeTip"), (NameValueBox, "nameValueTip"),
+            (ExtensionModeBox, "extensionModeTip"), (ExtensionTextBox, "extensionTextTip"),
+            (ReplaceBox, "replaceFindTip"), (WithBox, "replaceWithTip"),
+            (ReplaceIgnoreCaseCheck, "replaceMatchCaseTip"), (ReplaceFirstCheck, "replaceFirstTip"),
+            (PrefixBox, "prefixTip"), (InsertBox, "insertTip"), (InsertPosBox, "insertPositionTip"),
+            (SuffixBox, "suffixTip"), (NumberModeBox, "numberModeTip"), (NumberAtBox, "numberAtTip"),
+            (NumberStartBox, "numberStartTip"), (NumberIncrementBox, "numberIncrementTip"),
+            (NumberPaddingBox, "numberPaddingTip"), (NumberSeparatorBox, "numberSeparatorTip"),
+            (NumberBreakBox, "numberBreakTip"), (NumberFolderCheck, "numberFolderTip"),
+            (NumberTypeBox, "numberTypeTip"), (NumberCaseBox, "numberCaseTip"),
+            (FolderModeBox, "folderModeTip"), (FolderSeparatorBox, "folderSeparatorTip"),
+            (FolderLevelsBox, "folderLevelsTip"), (RemoveFirstBox, "removeFirstTip"),
+            (RemoveLastBox, "removeLastTip"), (RemoveFromBox, "removeFromTip"),
+            (RemoveToBox, "removeToTip"), (RemoveCharsBox, "removeCharsTip"),
+            (RemoveWordsBox, "removeWordsTip"), (CropModeBox, "cropModeTip"),
+            (CropTextBox, "cropTextTip"), (RemoveDigitsCheck, "removeDigitsTip"),
+            (RemoveHighCheck, "removeHighTip"), (RemoveDoubleSpacesCheck, "removeDoubleSpacesTip"),
+            (RemoveAccentsCheck, "removeAccentsTip"), (RemoveSymbolsCheck, "removeSymbolsTip"),
+            (TrimSpacesCheck, "trimSpacesTip"), (TrimCharsCheck, "trimCharsTip"),
+            (LeadDotsBox, "leadDotsTip"), (DateModeBox, "dateModeTip"),
+            (DateFormatBox, "dateFormatTip"), (DateAtBox, "dateAtTip"),
+            (DateOffsetBox, "dateOffsetTip")
+        ];
+        foreach (var (control, key) in tooltips)
+        {
+            ToolTip.SetTip(control, Tr(key));
+        }
     }
 
     private string Tr(string key)

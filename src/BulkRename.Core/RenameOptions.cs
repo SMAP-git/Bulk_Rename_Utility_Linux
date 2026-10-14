@@ -48,4 +48,14 @@ public sealed class RenameOptions
     public string NumberCase { get; init; } = "Same";
     public string ExtensionText { get; init; } = string.Empty;
     public string ExtensionMode { get; init; } = "Same";
+    public bool DateEnabled { get; init; } = true;
+    public string DateMode { get; init; } = "None";
+    public string DateType { get; init; } = "Created";
+    public string DateFormat { get; init; } = "DMY";
+    public string DateSeparator { get; init; } = string.Empty;
+    public string DateSegmentSeparator { get; init; } = string.Empty;
+    public string DateCustomFormat { get; init; } = string.Empty;
+    public bool DateCentury { get; init; }
+    public int DateOffsetDays { get; init; }
+    public int DateInsertPosition { get; init; }
 }

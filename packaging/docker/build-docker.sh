@@ -18,6 +18,7 @@ if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
 fi
 
 cp "$ROOT_DIR/packaging/docker/Dockerfile" "$BUILD_DIR/Dockerfile"
+cp "$ROOT_DIR/packaging/docker/brand-webui.py" "$BUILD_DIR/brand-webui.py"
 cp "$ROOT_DIR/packaging/docker/docker-entrypoint.sh" "$BUILD_DIR/docker-entrypoint.sh"
 cp "$ROOT_DIR/packaging/docker/openbox-rc.xml" "$BUILD_DIR/openbox-rc.xml"
 cp "$DEB_PACKAGE" "$BUILD_DIR/bulk-rename-utility.deb"

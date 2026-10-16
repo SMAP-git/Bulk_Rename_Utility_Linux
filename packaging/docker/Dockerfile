@@ -13,6 +13,9 @@ RUN sed -i 's/^Components: main$/Components: main universe/' /etc/apt/sources.li
     && rm -f /tmp/bulk-rename-utility.deb \
     && rm -rf /var/lib/apt/lists/*
 
+COPY brand-webui.py /tmp/brand-webui.py
+RUN python3 /tmp/brand-webui.py && rm /tmp/brand-webui.py
+
 RUN useradd --create-home --shell /usr/sbin/nologin app \
     && mkdir -p /config /media /tmp/.X11-unix \
     && chown app:app /config /media \

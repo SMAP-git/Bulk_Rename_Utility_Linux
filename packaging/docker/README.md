@@ -13,6 +13,11 @@ interface on port `6081` and native VNC on `5902`. Set `VNC_PASSWORD` to a
 appropriate on a trusted network. Bind exposed ports to localhost or firewall
 them when they are not protected by a trusted LAN.
 
+The WebUI browser tab displays **Bulk Rename Utility** and the app icon,
+including while connected or disconnected. This branding is applied when
+building the image; existing containers need to be recreated from the updated
+image. If a browser retains the old favicon, reload the page or reopen the tab.
+
 For Unraid, import `unraid-template.xml`, set the image to your registry image,
 and map the host folder you intend to rename to `/media` with read/write access.
 Map appdata to `/config`. The template runs as UID `99` / GID `100` (`nobody`
